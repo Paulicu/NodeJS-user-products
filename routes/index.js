@@ -161,4 +161,19 @@ router.post('/delete-product/:id', isLoggedIn, async (req, res) => {
     }
 });
 
+// Adăugăm o rută pentru vizualizarea detaliilor produsului
+router.get('/view-product/:id', isLoggedIn, async (req, res) => {
+    const productId = req.params.id;
+
+    try {
+        const [productRows] = await pool.query('SELECT * FROM products WHERE id = ?', [productId]);
+        const product = productRows[0];
+        res.render('view-product', { product });
+    } 
+    catch (error) {
+        console.error(error);
+        res.status(500).send('Error fetching product details');
+    }
+});
+
 module.exports = router;
