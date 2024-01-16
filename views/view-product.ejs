@@ -13,6 +13,30 @@
         <p><strong>Price:</strong> <%= product.price %></p>
         <p><strong>Description:</strong> <%= product.description %></p>
 
+        <p><a href="/view-product/<%= product.id %>/reviews">View All Reviews</a></p>
+
+        <!-- Adăugăm formularul pentru adăugarea recenziilor -->
+        <h2>Add a Review</h2>
+        <form action="/add-review/<%= product.id %>" method="post">
+            <div class="form-group">
+                <label for="rating">Rating:</label>
+                <select id="rating" name="rating" class="form-control" required>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="comment">Comment:</label>
+                <textarea id="comment" name="comment" class="form-control" required></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-success">Submit Review</button>
+        </form>
+
         <a href="/manage-products" class="btn btn-primary">Back to Manage Products</a>
     </body>
 </html>

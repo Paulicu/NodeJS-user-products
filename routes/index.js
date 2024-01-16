@@ -4,6 +4,8 @@ const passport = require('passport');
 const pool = require('../db'); // Verifică că calea către modulul de bază de date este corectă
 const router = express.Router();
 
+const { addReview, getReviewsByProductId } = require('../models/review');
+
 // Middleware pentru a verifica autentificarea
 function isLoggedIn(req, res, next) {
     if (req.isAuthenticated()) {
@@ -176,4 +178,36 @@ router.get('/view-product/:id', isLoggedIn, async (req, res) => {
     }
 });
 
+// Adăugăm o recenzie pentru un produs
+router.post('/add-review/:product_id', isLoggedIn, async (req, res) => {
+    const productId = req.params.product_id;
+    const { rating, comment } = req.body;
+
+    try {
+        const userId = req.user.id; // Obține ID-ul utilizatorului autentificat
+        const review = { product_id: productId, user_id: userId, rating, comment };
+        await addReview(review);
+        res.redirect(`/view-product/${productId}/reviews`);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Error adding review');
+    }
+});
+
+
+// Afișează toate recenziile pentru un produs
+router.get('/view-product/:id/reviews', isLoggedIn, async (req, res) => {
+    const productId = req.params.id;
+
+    try {
+        const [productRows] = await pool.query('SELECT * FROM products WHERE id = ?', [productId]);
+        const product = productRows[0];
+
+        const reviews = await getReviewsByProductId(productId);
+        res.render('product-reviews', { product, reviews, productId });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Error fetching reviews');
+    }
+});
 module.exports = router;
