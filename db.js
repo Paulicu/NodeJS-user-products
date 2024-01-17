@@ -1,5 +1,6 @@
-// db.js
 const mysql = require('mysql2/promise');
+
+// Se creeaza un pool de conexiuni mySQL = colectie de conexiuni la db care pot fi refolosite.
 const pool = mysql.createPool({
     host: 'localhost',
     user: 'root',
@@ -10,4 +11,4 @@ const pool = mysql.createPool({
     queueLimit: 0,
 });
 
-module.exports = pool;
+module.exports = pool; // Se exporta obiectul pool, pentru a fi utilizat mai departe in aplicatie.

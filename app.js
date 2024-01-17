@@ -8,13 +8,22 @@ const routes = require('./routes');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Setarea motorului de vizualizare EJS
+// Setarea motorului de vizualizare EJS.
 app.set('view engine', 'ejs');
+
+// Adauga middleware pentru a analiza datele din cereri și a face disponibile obiectele req.body.
 app.use(express.urlencoded({ extended: true }));
+
+// Adauga middleware pentru gestionarea sesiunilor.
 app.use(session({ secret: 'secret', resave: false, saveUninitialized: false }));
+
+// Adauga middleware pentru initializarea 'passport'.
 app.use(passport.initialize());
+
+// Adauga middleware pentru gestionarea sesiunii 'passport'.
 app.use(passport.session());
 
+// Configurarea strategiei locale pentru autentificare. Verifica utilizatorul si parola in baza de date.
 passport.use(new LocalStrategy(async (username, password, done) => {
     try {
         const [rows] = await pool.query('SELECT * FROM users WHERE username = ?', [username]);
@@ -37,10 +46,12 @@ passport.use(new LocalStrategy(async (username, password, done) => {
     }
 }));
 
+// Serializeaza utilizatorul in sesiune, se retine doar id-ul.
 passport.serializeUser((user, done) => {
     done(null, user.id);
 });
 
+// Deserializeaza utilizatorul, folosind id-ul stocat.
 passport.deserializeUser(async (id, done) => {
     try {
         const [rows] = await pool.query('SELECT * FROM users WHERE id = ?', [id]);
@@ -52,19 +63,11 @@ passport.deserializeUser(async (id, done) => {
     }
 });
 
+// Adauga middleware catre ruta de baza '/'.
 app.use('/', routes);
 
-// Adăugăm o rută pentru editare produs
-app.get('/edit-product/:id', async (req, res) => {
-    // Implementați logica pentru editare și afișați pagina corespunzătoare
 
-});
-
-// Adăugăm o rută pentru ștergere produs
-app.get('/delete-product/:id', async (req, res) => {
-    // Implementați logica pentru ștergere și afișați pagina corespunzătoare
-});
-
+// Porneste serverul.
 app.listen(PORT, () => {
      console.log(`Server is running on http://localhost:${PORT}`);
 });
