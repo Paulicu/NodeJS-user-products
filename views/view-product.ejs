@@ -15,7 +15,6 @@
 
         <p><a href="/view-product/<%= product.id %>/reviews">View All Reviews</a></p>
 
-        <!-- Adăugăm formularul pentru adăugarea recenziilor -->
         <h2>Add a Review</h2>
         <form action="/add-review/<%= product.id %>" method="post">
             <div class="form-group">
@@ -37,6 +36,7 @@
             <button type="submit" class="btn btn-success">Submit Review</button>
         </form>
 
+        <br>
         <a href="/manage-products" class="btn btn-primary">Back to Manage Products</a>
     </body>
 </html>

@@ -153,6 +153,7 @@ router.get('/delete-product/:id', isLoggedIn, async (req, res) => {
 // Ștergere produs - procesare ștergere
 router.post('/delete-product/:id', isLoggedIn, async (req, res) => {
     const productId = req.params.id;
+    
     try {
         await pool.query('DELETE FROM products WHERE id = ?', [productId]);
         res.redirect('/manage-products');
@@ -210,4 +211,5 @@ router.get('/view-product/:id/reviews', isLoggedIn, async (req, res) => {
         res.status(500).send('Error fetching reviews');
     }
 });
+
 module.exports = router;
