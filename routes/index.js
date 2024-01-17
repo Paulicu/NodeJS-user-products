@@ -79,13 +79,13 @@ router.get('/manage-products', isLoggedIn, async (req, res) => {
         const users = userRows;
         const [productRows] = await pool.query('SELECT * FROM products');
         const products = productRows;
-        res.render('manage-products', { users, products });
-    } 
-    catch (error) {
+        res.render('manage-products', { users, products, user: req.user }); // Pass the 'user' variable
+    } catch (error) {
         console.error(error);
         res.status(500).send('Error fetching products and users');
     }
 });
+
 
 // Adăugare produs - ruta pentru afișarea formularului
 router.get('/add-product', isLoggedIn, (req, res) => {
@@ -205,10 +205,33 @@ router.get('/view-product/:id/reviews', isLoggedIn, async (req, res) => {
         const product = productRows[0];
 
         const reviews = await getReviewsByProductId(productId);
-        res.render('product-reviews', { product, reviews, productId });
+        res.render('product-reviews', { product, reviews, productId, user: req.user }); // Pass the 'user' variable
     } catch (error) {
         console.error(error);
         res.status(500).send('Error fetching reviews');
+    }
+});
+
+
+// Ștergere recenzie - procesare ștergere
+router.post('/delete-review/:id', isLoggedIn, async (req, res) => {
+    const reviewId = req.params.id;
+    
+    try {
+        // Verificăm dacă utilizatorul autentificat este cel care a creat recenzia
+        const [reviewRows] = await pool.query('SELECT * FROM reviews WHERE id = ?', [reviewId]);
+        const review = reviewRows[0];
+
+        if (!review || (req.user.id !== review.user_id)) {
+            // Redirect către pagina de review-uri sau altă pagină relevantă
+            res.redirect('/view-product/' + review.product_id + '/reviews');
+        } else {
+            await pool.query('DELETE FROM reviews WHERE id = ?', [reviewId]);
+            res.redirect('/view-product/' + review.product_id + '/reviews');
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Error deleting review');
     }
 });
 

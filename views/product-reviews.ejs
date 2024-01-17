@@ -9,15 +9,41 @@
 
     <body class="container" style="margin-top: 50px;">
         <h1><%= product.name %> - Product Reviews</h1>
-
-        <ul>
-            <% reviews.forEach(review => { %>
-                <li>
-                    <strong>Rating:</strong> <%= review.rating %>, 
-                    <strong>Comment:</strong> <%= review.comment %>
-                </li>
-            <% }); %>
-        </ul>
+    
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Rating</th>
+                    <th>Comment</th>
+                    <th>By</th>
+                    <% if (user) { %>
+                        <th>Action</th>
+                    <% } %>
+                </tr>
+            </thead>
+            <tbody>
+                <% reviews.forEach(review => { %>
+                    <tr>
+                        <td><%= generateStars(review.rating) %></td>
+                        <td><%= review.comment %></td>
+                        <td><%= review.username %></td>
+                        
+                        <% if (user && user.id === review.user_id) { %>
+                            <td>
+                                <form action="/delete-review/<%= review.id %>" method="post" style="display: inline;">
+                                    <button type="submit" class="btn btn-danger">Delete</button>
+                                </form>
+                            </td>
+                        <% } %>
+                    </tr>
+                <% }); %>
+            </tbody>
+        </table>
+        
+        <% function generateStars(rating) {
+            const star = '⭐️';
+            return star.repeat(rating);
+        } %>
 
         <p><a href="/view-product/<%= productId %>">Back to Product</a></p>
         <p><a href="/">Back to Home</a></p>

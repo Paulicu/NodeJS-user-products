@@ -7,7 +7,7 @@ const addReview = async (review) => {
 };
 
 const getReviewsByProductId = async (product_id) => {
-    const [rows] = await pool.query('SELECT * FROM reviews WHERE product_id = ?', [product_id]);
+    const [rows] = await pool.query('SELECT reviews.*, users.username FROM reviews JOIN users ON reviews.user_id = users.id WHERE product_id = ?', [product_id]);
     return rows;
 };
 
