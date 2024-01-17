@@ -31,7 +31,7 @@
                         <% if (user && user.id === review.user_id) { %>
                             <td>
                                 <form action="/delete-review/<%= review.id %>" method="post" style="display: inline;">
-                                    <button type="submit" class="btn btn-danger">Delete</button>
+                                    <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure want to delete this record?')">Delete</button>
                                 </form>
                             </td>
                         <% } %>
